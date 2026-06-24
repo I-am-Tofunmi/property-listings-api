@@ -1,0 +1,278 @@
+{
+  "info": {
+    "name": "Property API v2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "userToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@toobrains.com\",\n  \"password\": \"password123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('adminToken', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@toobrains.com\",\n  \"password\": \"password123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('userToken', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@toobrains.com\",\n  \"password\": \"password123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/logout",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ]
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }]
+          }
+        },
+        {
+          "name": "Me - No Token (401)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        {
+          "name": "GET all properties",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/properties"
+          }
+        },
+        {
+          "name": "GET property by id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/properties/1"
+          }
+        },
+        {
+          "name": "POST create property (admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/properties",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Lagos Island Apartment\",\n  \"city\": \"Lagos\",\n  \"country\": \"Nigeria\",\n  \"pricePerNight\": 50000,\n  \"bedrooms\": 3,\n  \"status\": \"live\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST create property - No Token (401)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/properties",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Lagos Island Apartment\",\n  \"city\": \"Lagos\",\n  \"country\": \"Nigeria\",\n  \"pricePerNight\": 50000,\n  \"bedrooms\": 3,\n  \"status\": \"live\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST create property - User Token (403)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/properties",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{userToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Lagos Island Apartment\",\n  \"city\": \"Lagos\",\n  \"country\": \"Nigeria\",\n  \"pricePerNight\": 50000,\n  \"bedrooms\": 3,\n  \"status\": \"live\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH update property (admin)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/properties/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Apartment\",\n  \"city\": \"Lagos\",\n  \"country\": \"Nigeria\",\n  \"pricePerNight\": 60000,\n  \"bedrooms\": 4,\n  \"status\": \"live\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE property (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/properties/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enquiries",
+      "item": [
+        {
+          "name": "GET all enquiries (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/enquiries",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }]
+          }
+        },
+        {
+          "name": "GET all enquiries - No Token (401)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/enquiries"
+          }
+        },
+        {
+          "name": "GET all enquiries - User Token (403)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/enquiries",
+            "header": [{ "key": "Authorization", "value": "Bearer {{userToken}}" }]
+          }
+        },
+        {
+          "name": "POST create enquiry (user)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/enquiries",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{userToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": 1,\n  \"message\": \"Is this available?\",\n  \"source\": \"web\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST create enquiry - No Token (401)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/enquiries",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": 1,\n  \"message\": \"Is this available?\",\n  \"source\": \"web\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "GET all users (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }]
+          }
+        },
+        {
+          "name": "GET all users - No Token (401)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users"
+          }
+        },
+        {
+          "name": "GET user by id (admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }]
+          }
+        }
+      ]
+    }
+  ]
+}

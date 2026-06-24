@@ -1,0 +1,38 @@
+{
+  "name": "property-api",
+  "version": "1.0.0",
+  "main": "server-raw.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "migrate:up": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
+    "migrate:create": "node-pg-migrate create",
+    "seed": "psql --dbname=postgresql://postgres:tofunmi05@localhost:5432/property_api --file=seeds/dev.sql",
+    "test": "vitest run --reporter=verbose --fileParallelism=false"  
+  },
+  "vitest": {
+    "testEnvironment": "node"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "pg": "^8.21.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.2",
+    "node-pg-migrate": "^8.0.4",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.8"
+  },
+  "node-pg-migrate": {
+    "databaseUrlEnvVar": "DATABASE_URL"
+  }
+}
